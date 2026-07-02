@@ -7,7 +7,7 @@ from tools.base.tool_service import ToolService
 
 
 @Tool(
-    name="biosamples.submit_sample",
+    name="biosamples_submitsample",
     description=(
             "Submit a validated BioSamples-compatible sample object to BioSamples. "
             "Use this tool only when the user has already reviewed and confirmed a prepared "

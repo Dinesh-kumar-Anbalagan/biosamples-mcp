@@ -6,7 +6,7 @@ from tools.base.tool_service import ToolService
 from orchestrator.request_context import RequestContext
 
 @Tool(
-    name="biosamples.get_sample",
+    name="biosamples_getsample",
     description = (
         "Retrieve one existing BioSamples record using a known BioSamples accession ID. "
         "Use this tool only when the user provides a specific sample accession and wants "

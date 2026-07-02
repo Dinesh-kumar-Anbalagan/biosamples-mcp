@@ -3,22 +3,11 @@ import httpx
 from typing import Any
 from core.decorators import Component
 from core.config import settings
+from core.logger import get_logger
+from domain.bio_samples_api_error import BioSamplesAPIError
+from domain.filter_builder import FilterBuilder
 
-class BioSamplesAPIError(Exception):
-    code = "biosamples_api_error"
-
-    def __init__(
-        self,
-        message: str,
-        status_code: int | None = None,
-        details: list[dict[str, Any]] | None = None,
-        retryable: bool = True,
-    ):
-        super().__init__(message)
-        self.status_code = status_code
-        self.details = details or []
-        self.retryable = retryable
-
+logger = get_logger(__name__)
 
 @Component("bio_samples_adapter")
 class BioSamplesAdapter:
@@ -106,19 +95,8 @@ class BioSamplesAdapter:
         ]
 
         for filter_item in filters or []:
-            filter_type = filter_item.get("type")
-            field = filter_item.get("field")
-            value = filter_item.get("value")
-
-            if not filter_type or not field or not value:
-                raise BioSamplesAPIError(
-                    "Invalid filter. Each filter requires type, field, and value.",
-                    details=[{"filter": filter_item}],
-                    retryable=False,
-                )
-
             params.append(
-                ("filter", f"{filter_type}:{field}:{value}")
+                ("filter", FilterBuilder.build(filter_item))
             )
 
         if date_range:

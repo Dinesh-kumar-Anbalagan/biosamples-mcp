@@ -9,7 +9,7 @@ from tools.base.tool_service import ToolService
 
 
 @Tool(
-    name="biosamples.search_samples",
+    name="biosamples_searchsamples",
     description=(
             "Search existing BioSamples records using natural-language or structured search criteria. "
             "This tool is read-only. It only searches existing BioSamples records. "
@@ -35,51 +35,39 @@ from tools.base.tool_service import ToolService
             "Use attr filters for organism, disease, tissue, material, sex, and geographic location. "
             "Example: {'type': 'attr', 'field': 'organism', 'value': 'Homo sapiens'}. "
 
-            "Location attribute fields can include: "
-            "'geographic location (country and/or sea)', "
-            "'geographic location (region and locality)', "
-            "'geographic location (latitude)', "
-            "'geographic location (longitude)', "
-            "'geographic location (altitude)', "
-            "'geographic location (elevation)', "
-            "'geographic location (depth)', "
-            "and 'geo loc name'. "
-            "Example location filter: "
-            "{'type': 'attr', 'field': 'geographic location (country and/or sea)', 'value': 'United Kingdom'}. "
+            "Accession filter format: "
+            "{'type': 'acc', 'accession': '<sample accession>'}. "
+            "BioSamples format: acc:<accession>. Supports wildcards. "
+            "Example: {'type': 'acc', 'field': 'accession' ,'value': 'SAMN*'}. "
 
-            "Date range filter format: "
+            "Relationship filter format: "
+            "{'type': 'rel', 'field': '<relation type>', 'value': '<target accession>'}. "
+            "BioSamples format: rel:<relation_type>:<accession>. "
+
+            "Reverse relationship filter format: "
+            "{'type': 'rrel', 'field': '<relation type>', 'value': '<source accession>'}. "
+            "BioSamples format: rrel:<relation_type>:<accession>. "
+
+            "Domain filter format: "
+            "{'type': 'dom', 'field':'domain', 'value': '<domain>'}. "
+            "BioSamples format: dom:<domain>. The domain must use the self. prefix. "
+            "Example: {'type': 'dom', 'domain': 'self.BioSamples'}. "
+
+            "Name filter format: "
+            "{'type': 'name', 'field': 'name', 'value': '<sample name>'}. "
+            "BioSamples format: name:<sample name>. Use this for exact sample name filtering. "
+
+            "External reference data filter format: "
+            "{'type': 'extd', 'field': '<archive>', 'value': '<external ID>'}. "
+            "BioSamples format: extd:<archive>:<external ID>. "
+            
+            "Date range format: "
             "{'type': 'dt', 'field': 'release' or 'update', 'from': 'YYYY-MM-DD', 'until': 'YYYY-MM-DD'}. "
             "BioSamples filter format: dt:<release|update>:from=<date>until=<date>. "
             "Use ISO 8601 date format. "
             "Example: {'type': 'dt', 'field': 'release', 'from': '2020-01-01', 'until': '2024-12-31'}. "
             "If only a start date is known, send only 'from'. "
             "If only an end date is known, send only 'until'. "
-
-            "Accession filter format: "
-            "{'type': 'acc', 'accession': '<sample accession>'}. "
-            "BioSamples format: acc:<accession>. Supports wildcards. "
-            "Example: {'type': 'acc', 'accession': 'SAMN*'}. "
-
-            "Relationship filter format: "
-            "{'type': 'rel', 'relationType': '<relation type>', 'accession': '<target accession>'}. "
-            "BioSamples format: rel:<relation_type>:<accession>. "
-
-            "Reverse relationship filter format: "
-            "{'type': 'rrel', 'relationType': '<relation type>', 'accession': '<source accession>'}. "
-            "BioSamples format: rrel:<relation_type>:<accession>. "
-
-            "Domain filter format: "
-            "{'type': 'dom', 'domain': '<domain>'}. "
-            "BioSamples format: dom:<domain>. The domain must use the self. prefix. "
-            "Example: {'type': 'dom', 'domain': 'self.BioSamples'}. "
-
-            "Name filter format: "
-            "{'type': 'name', 'name': '<sample name>'}. "
-            "BioSamples format: name:<sample name>. Use this for exact sample name filtering. "
-
-            "External reference data filter format: "
-            "{'type': 'extd', 'archive': '<archive>', 'externalId': '<external ID>'}. "
-            "BioSamples format: extd:<archive>:<external ID>. "
 
             "Optional input: 'page'. "
             "'page' must be an integer zero-based page number. Default is 0. "

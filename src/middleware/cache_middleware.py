@@ -51,7 +51,7 @@ class CacheMiddleware(ToolMiddleware):
         except Exception:
             cached = None
 
-        if cached:
+        if cached and cached is not None:
             logger.info(
                 "Cache hit",
                 extra={
@@ -63,9 +63,6 @@ class CacheMiddleware(ToolMiddleware):
                 },
             )
             return json.loads(cached)
-        
-        cached_response = json.loads(cached)
-        return cached_response
 
         response = await next_handler(context)
 

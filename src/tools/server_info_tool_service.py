@@ -5,7 +5,7 @@ from orchestrator.request_context import RequestContext
 from tools.base.tool_service import ToolService
 
 @Tool(
-    name="biosamples.server_info",
+    name="biosamples_serverinfo",
     description=(
             "Return basic information about the BioSamples MCP server. "
             "Use this tool when the user or MCP client wants to inspect the server name, "
@@ -29,7 +29,6 @@ class ServerInfoToolService(ToolService):
             "version": "0.1.0",
             "supportedTools": [
                 "biosamples.server_info",
-                "biosamples.prepare_submission",
                 "biosamples.submit_sample",
                 "biosamples.search_samples",
                 "biosamples.get_sample",
