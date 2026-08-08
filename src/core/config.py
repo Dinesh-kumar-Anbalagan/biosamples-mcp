@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-import os
 
+import os
 
 @dataclass(frozen=True)
 class Settings:
@@ -22,6 +22,5 @@ class Settings:
         "CACHE_ENABLED",
         "true",
     ).lower() == "true"
-
 
 settings = Settings()

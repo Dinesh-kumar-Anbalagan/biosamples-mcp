@@ -1,5 +1,4 @@
 from typing import Any
-
 from core.decorators import Tool
 from orchestrator.request_context import RequestContext
 from tools.base.tool_service import ToolService
@@ -9,15 +8,16 @@ logger = get_logger(__name__)
 
 @Tool(
     name="biosamples_serverinfo",
-    description=(
-            "Return basic information about the BioSamples MCP server. "
-            "Use this tool when the user or MCP client wants to inspect the server name, "
-            "server version, read-only/write mode status, supported BioSamples tools, "
-            "and high-level server capabilities. "
-            "Input: this tool does not require any input parameters. "
-            "Example input payload: {}. "
-            "This tool is read-only and does not call the BioSamples API, search samples, "
-            "retrieve sample records, prepare submissions, validate drafts, or submit samples."
+    description=('''
+            1. Return basic information about the BioSamples MCP server.
+            2. Use this tool when the user or MCP client wants to inspect the server name
+               server version, read-only/write mode status, supported BioSamples tools,
+               and high-level server capabilities.
+            3. Input: this tool does not require any input parameters.
+                    Example input payload: {}.
+            4. This tool is read-only and does not call the BioSamples API, search samples,
+               retrieve sample records, prepare submissions, validate drafts, or submit samples.
+            '''
     ),
 )
 class ServerInfoToolService(ToolService):

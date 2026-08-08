@@ -1,11 +1,10 @@
 import time
-from typing import Any, Awaitable, Callable
 
+from typing import Any, Awaitable, Callable
 from core.logger import get_logger
 from orchestrator.request_context import RequestContext
 
 logger = get_logger(__name__)
-
 
 class LoggingMiddleware:
     async def process(

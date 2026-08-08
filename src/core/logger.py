@@ -1,9 +1,9 @@
 import json
 import logging
 import sys
+
 from datetime import datetime, timezone
 from typing import Any
-
 
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
@@ -25,7 +25,6 @@ class JsonFormatter(logging.Formatter):
 
         return json.dumps(log_data, default=str)
 
-
 def configure_logging(level: str = "INFO") -> None:
     handler = logging.StreamHandler(sys.stderr)
     handler.setFormatter(JsonFormatter())
@@ -35,7 +34,6 @@ def configure_logging(level: str = "INFO") -> None:
 
     root_logger.handlers.clear()
     root_logger.addHandler(handler)
-
 
 def get_logger(name: str) -> logging.Logger:
     return logging.getLogger(name)

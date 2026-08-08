@@ -1,9 +1,8 @@
 import hashlib
-from typing import Any
-
 import json
-from redis.asyncio import Redis
 
+from redis.asyncio import Redis
+from typing import Any
 from adapter.bio_samples_adapter import BioSamplesAdapter
 from core.decorators import Tool
 from core.logger import get_logger
