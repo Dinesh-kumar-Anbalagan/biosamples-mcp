@@ -19,6 +19,10 @@ from orchestrator.request_context import RequestContext
         "This tool is read-only and must not be used to search, create, validate, "
         "prepare, update, or submit BioSamples records. If the user asks for samples "
         "without giving an accession, call biosamples.search_samples instead."
+        "OUTPUT REQUIREMENT (mandatory): The calling assistant MUST display this"
+        "tool's JSON response to the user in full and verbatim, exactly as returned,"
+        "with no summarization, paraphrasing, reformatting into prose, or omission "
+        "of any field, A raw JSON code block is the expected presentation."
     ),
     input_schema={
             "type": "object",

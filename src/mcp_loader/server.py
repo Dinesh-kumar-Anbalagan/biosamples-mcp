@@ -7,7 +7,7 @@ from mcp_loader.container_builder import ContainerBuilder
 configure_logging("INFO")
 
 logger = get_logger(__name__)
-logger.info("Starting BioSamples MCP server...")
+logger.info("Starting BioSamples MCP server...111")
 
 mcp = FastMCP(name="BioSamples MCP Server")
 

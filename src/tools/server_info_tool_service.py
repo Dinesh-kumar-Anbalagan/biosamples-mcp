@@ -3,6 +3,9 @@ from typing import Any
 from core.decorators import Tool
 from orchestrator.request_context import RequestContext
 from tools.base.tool_service import ToolService
+from core.logger import get_logger
+
+logger = get_logger(__name__)
 
 @Tool(
     name="biosamples_serverinfo",
@@ -24,13 +27,22 @@ class ServerInfoToolService(ToolService):
         payload: dict[str, Any],
     ) -> dict[str, Any]:
 
-        return {
+       logger.info(
+            "BioSamples ServerInfo requesting completed",
+            extra={
+                "extra_fields": {
+                    "url": "ServerInfoToolService",
+                }
+            },
+        )
+
+       return {
             "serverName": "BioSamples MCP Server",
             "version": "0.1.0",
             "supportedTools": [
-                "biosamples.server_info",
-                "biosamples.submit_sample",
-                "biosamples.search_samples",
-                "biosamples.get_sample",
+                "biosamples_serverinfo",
+                "biosamples_submitsample",
+                "biosamples_searchsamples",
+                "biosamples_getsample",
             ],
-        }
+       }

@@ -10,7 +10,6 @@ JSON_SCHEMA_TYPE_MAP = {
     "array": list,
 }
 
-
 class DynamicToolLoader:
     def __init__(
         self,

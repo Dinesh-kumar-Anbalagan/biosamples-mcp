@@ -6,7 +6,7 @@ import os
 class Settings:
     biosamples_base_url: str = os.getenv(
         "BIOSAMPLES_BASE_URL",
-        "https://www.ebi.ac.uk/biosamples",
+        "https://wwwdev.ebi.ac.uk/biosamples",
     )
     biosamples_timeout_seconds: float = float(
         os.getenv("BIOSAMPLES_TIMEOUT_SECONDS", "30")
@@ -18,6 +18,10 @@ class Settings:
     cache_ttl_seconds: int = int(
         os.getenv("CACHE_TTL_SECONDS", "300")
     )
+    cache_enabled: bool = os.getenv(
+        "CACHE_ENABLED",
+        "true",
+    ).lower() == "true"
 
 
 settings = Settings()

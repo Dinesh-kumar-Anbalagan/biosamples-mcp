@@ -16,7 +16,7 @@ class AuthMiddleware(ToolMiddleware):
         next_handler: NextHandler,
     ):
         protected_tools = {
-            "biosamples.submit_sample",
+            "biosamples_submitsample",
         }
 
         if context.tool_name not in protected_tools:
@@ -24,12 +24,12 @@ class AuthMiddleware(ToolMiddleware):
             context.user_id = "anonymous-user"
             return await next_handler(context)
 
-        auth_token = context.payload.get("authToken")
+        webin_id = context.payload.get("webinId")
 
-        if not auth_token:
-            raise AuthError("Authentication token is required for this tool.")
+        if not webin_id:
+            raise AuthError("Webin ID is required for this tool.")
 
         context.authenticated = True
-        context.user_id = "authenticated-user"
+        context.user_id = webin_id
 
         return await next_handler(context)

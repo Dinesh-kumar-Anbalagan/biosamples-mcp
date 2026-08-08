@@ -23,14 +23,33 @@ class CacheMiddleware(ToolMiddleware):
     ):
         logger.info("RedisCacheMiddleware")
         non_cacheable = {
-            "biosamples.submit_sample",
-            "biosamples.prepare_submission",
+            "biosamples_submitsample",
         }
 
         if context.tool_name in non_cacheable:
+            logger.info(
+                "Skipping cache for non-cacheable tool",
+                extra={
+                    "extra_fields": {
+                        "event": "cache_skipped",
+                        "tool": context.tool_name,
+                        "requestId": context.request_id,
+                    }
+                },
+            )
             return await next_handler(context)
 
         if self.redis is None:
+            logger.info(
+                "Skipping cache because Redis client is unavailable",
+                extra={
+                    "extra_fields": {
+                        "event": "cache_unavailable",
+                        "tool": context.tool_name,
+                        "requestId": context.request_id,
+                    }
+                },
+            )
             return await next_handler(context)
 
         cache_key = self._cache_key(context)
@@ -48,10 +67,22 @@ class CacheMiddleware(ToolMiddleware):
 
         try:
             cached = await self.redis.get(cache_key)
-        except Exception:
-            cached = None
+        except Exception as error:
+            logger.warning(
+                "Redis cache unavailable. Continuing without cache.",
+                extra={
+                    "extra_fields": {
+                        "event": "cache_read_failed",
+                        "tool": context.tool_name,
+                        "requestId": context.request_id,
+                        "error": str(error),
+                    }
+                },
+            )
 
-        if cached and cached is not None:
+            return await next_handler(context)
+
+        if cached is not None:
             logger.info(
                 "Cache hit",
                 extra={
@@ -84,16 +115,6 @@ class CacheMiddleware(ToolMiddleware):
                     }
                 },
             )
-
-        logger.info({
-            "event": "cache_miss",
-            "tool": context.tool_name,
-            "cache": {
-            "hit": False,
-            "type": "redis",
-            "ttlSeconds": self.ttl_seconds,
-        },
-        })
         return response
 
     def _cache_key(self, context: RequestContext) -> str:

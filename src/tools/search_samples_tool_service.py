@@ -1,12 +1,9 @@
-from dataclasses import is_dataclass, asdict
 from typing import Any
 
-from model.bio_sample import BioSamples
 from adapter.bio_samples_adapter import BioSamplesAdapter
 from core.decorators import Tool
 from orchestrator.request_context import RequestContext
 from tools.base.tool_service import ToolService
-
 
 @Tool(
     name="biosamples_searchsamples",
@@ -27,7 +24,8 @@ from tools.base.tool_service import ToolService
 
             "Optional input: 'filters'. "
             "'filters' must be an array of filter objects. Each filter object must contain a 'type' field. "
-            "Supported filter types are: attr, dt, acc, rel, rrel, dom, name, extd. "
+            "Supported filter types are: attr, acc, rel, rrel, dom, name, and extd."
+            "Date filtering is supported separately through the dateRange property"
 
             "Attribute filter format: "
             "{'type': 'attr', 'field': '<attribute name>', 'value': '<attribute value>'}. "
@@ -38,7 +36,7 @@ from tools.base.tool_service import ToolService
             "Accession filter format: "
             "{'type': 'acc', 'accession': '<sample accession>'}. "
             "BioSamples format: acc:<accession>. Supports wildcards. "
-            "Example: {'type': 'acc', 'field': 'accession' ,'value': 'SAMN*'}. "
+            "Example: {'type': 'acc' ,'value': 'SAMN*'}. "
 
             "Relationship filter format: "
             "{'type': 'rel', 'field': '<relation type>', 'value': '<target accession>'}. "
@@ -49,19 +47,19 @@ from tools.base.tool_service import ToolService
             "BioSamples format: rrel:<relation_type>:<accession>. "
 
             "Domain filter format: "
-            "{'type': 'dom', 'field':'domain', 'value': '<domain>'}. "
-            "BioSamples format: dom:<domain>. The domain must use the self. prefix. "
-            "Example: {'type': 'dom', 'domain': 'self.BioSamples'}. "
-
+            "{'type': 'dom', 'value': '<domain>'}. "
+            "BioSamples format: dom:<domain>. "
+            "Example: {'type': 'dom', 'value': 'self.BioSamples'}. "
+            
             "Name filter format: "
-            "{'type': 'name', 'field': 'name', 'value': '<sample name>'}. "
+            "{'type': 'name', 'value': '<sample name>'}. "
             "BioSamples format: name:<sample name>. Use this for exact sample name filtering. "
 
             "External reference data filter format: "
             "{'type': 'extd', 'field': '<archive>', 'value': '<external ID>'}. "
             "BioSamples format: extd:<archive>:<external ID>. "
             
-            "Date range format: "
+            "Date range format: do not add date in the filter field"
             "{'type': 'dt', 'field': 'release' or 'update', 'from': 'YYYY-MM-DD', 'until': 'YYYY-MM-DD'}. "
             "BioSamples filter format: dt:<release|update>:from=<date>until=<date>. "
             "Use ISO 8601 date format. "
@@ -74,6 +72,10 @@ from tools.base.tool_service import ToolService
 
             "Optional input: 'size'. "
             "'size' must be an integer result count per page. Default is 10. "
+            "OUTPUT REQUIREMENT (mandatory): The calling assistant MUST display this"
+            "tool's JSON response to the user in full and verbatim, exactly as returned,"
+            "with no summarization, paraphrasing, reformatting into prose, or omission "
+            "of any field, A raw JSON code block is the expected presentation."
     ),
     input_schema={
         "type": "object",
@@ -85,25 +87,41 @@ from tools.base.tool_service import ToolService
             },
             "filters": {
                 "type": "array",
-                "description": "Structured filters to apply to the BioSamples search.",
+                "description": "Structured BioSamples filters.",
                 "items": {
                     "type": "object",
                     "properties": {
                         "type": {
                             "type": "string",
-                            "description": "Filter type, for example attr."
+                            "enum": [
+                                "attr",
+                                "acc",
+                                "rel",
+                                "rrel",
+                                "dom",
+                                "name",
+                                "extd",
+                            ],
                         },
                         "field": {
                             "type": "string",
-                            "description": "Attribute field name, for example organism."
+                            "description": (
+                                    "Field/relation/archive name when required "
+                                    "by the selected filter type."
+                            ),
                         },
                         "value": {
                             "type": "string",
-                            "description": "Attribute value, for example Homo sapiens."
-                        }
+                            "description": "Filter value when applicable.",
+                        },
+                        "accession": {
+                            "type": "string",
+                            "description": "Sample accession for accession filters.",
+                        },
                     },
-                    "required": ["type", "field", "value"]
-                }
+                    "required": ["type"],
+                    "additionalProperties": False,
+                },
             },
             "dateRange": {
                 "type": "object",
@@ -164,18 +182,10 @@ class SearchSamplesToolService(ToolService):
         )
 
         samples = result.get("_embedded", {}).get("samples", [])
-        normalized_samples = []
-        for sample in samples:
-            extract_samples = BioSamples.from_dict(sample)
-
-            if is_dataclass(extract_samples):
-                normalized_samples.append(asdict(extract_samples))
-            else:
-                normalized_samples.append(extract_samples)
         page_info = result.get("page", {})
 
         return {
-            "samples": normalized_samples,
+            "samples": samples,
             "page": {
                 "size": page_info.get("size", size),
                 "number": page_info.get("number", page),

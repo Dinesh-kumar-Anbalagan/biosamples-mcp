@@ -3,6 +3,7 @@ import inspect
 import pkgutil
 import re
 
+from core.redis_client import create_redis_client
 from dependency_injector import containers, providers
 from core.decorators import component_registry, tool_registry
 
@@ -32,6 +33,8 @@ class ContainerBuilder:
             import_all_modules(package)
 
         container = containers.DynamicContainer()
+
+        container.redis = providers.Singleton(create_redis_client)
 
         for cls in component_registry:
             provider = providers.Singleton(cls)

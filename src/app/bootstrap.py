@@ -10,14 +10,20 @@ from middleware.cache_middleware import CacheMiddleware
 def build_application(container) -> MCPToolOrchestrator:
     tool_executor = ToolExecutor(container)
 
-    redis_client = create_redis_client()
     middlewares = [
         LoggingMiddleware(),
         AuthMiddleware(),
-        CacheMiddleware(
-            redis_client=redis_client,
-            ttl_seconds=settings.cache_ttl_seconds,),
     ]
+
+    if settings.cache_enabled:
+        redis_client = create_redis_client()
+
+        middlewares.append(
+            CacheMiddleware(
+                redis_client=redis_client,
+                ttl_seconds=settings.cache_ttl_seconds,
+            )
+        )
 
     pipeline = ExecutionPipeline(
         middlewares=middlewares,

@@ -61,14 +61,16 @@ class BioSamplesAdapter:
         return response.json()
 
     async def _post(
-        self,
-        path: str,
-        body: dict[str, Any],
-        auth_token: str | None = None,
+            self,
+            path: str,
+            body: dict[str, Any],
+            auth_token: str | None = None,
     ) -> dict[str, Any]:
+        url = f"{self.base_url}{path}"
+
         async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
             response = await client.post(
-                f"{self.base_url}{path}",
+                url,
                 json=body,
                 headers={
                     **self._headers(auth_token),
@@ -76,7 +78,22 @@ class BioSamplesAdapter:
                 },
             )
 
+        logger.info(
+            "BioSamples POST request completed",
+            extra={
+                "extra_fields": {
+                    "url": url,
+                    "status_code": response.status_code,
+                    "response_preview": response.text[:500],
+                }
+            },
+        )
+
         self._raise_for_error(response, "BioSamples POST API failed.")
+
+        if not response.content:
+            return {}
+
         return response.json()
 
     async def search_samples(
