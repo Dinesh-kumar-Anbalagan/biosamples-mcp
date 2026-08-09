@@ -1,15 +1,13 @@
 import inspect
-from unittest.mock import AsyncMock
-
 import pytest
 
-from mcp_loader.dynamic_tool_loader import DynamicToolLoader
+from unittest.mock import AsyncMock
 
+from mcp_loader.dynamic_tool_loader import DynamicToolLoader
 
 class Provider:
     def __init__(self, provides):
         self.provides = provides
-
 
 class MCP:
     def __init__(self):
@@ -18,11 +16,9 @@ class MCP:
     def add_tool(self, **kwargs):
         self.tools.append(kwargs)
 
-
 class Container:
     def __init__(self, providers):
         self.providers = providers
-
 
 @pytest.mark.asyncio
 async def test_create_tool_handler_passes_kwargs_to_orchestrator():
@@ -39,7 +35,6 @@ async def test_create_tool_handler_passes_kwargs_to_orchestrator():
         payload={"query": "blood"},
     )
 
-
 @pytest.mark.asyncio
 async def test_create_tool_handler_supports_nested_kwargs_payload():
     orchestrator = AsyncMock()
@@ -53,7 +48,6 @@ async def test_create_tool_handler_supports_nested_kwargs_payload():
         tool_name="tool",
         payload={"query": "blood"},
     )
-
 
 def test_schema_to_signature_maps_json_schema_types():
     loader = DynamicToolLoader(MCP(), AsyncMock(), Container({}))
@@ -75,7 +69,6 @@ def test_schema_to_signature_maps_json_schema_types():
     assert signature.parameters["page"].annotation is int
     assert signature.parameters["filters"].default is None
     assert signature.parameters["filters"].annotation is list
-
 
 def test_register_tools_adds_only_decorated_tools():
     class ToolClass:

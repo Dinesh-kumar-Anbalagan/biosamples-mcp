@@ -3,7 +3,6 @@ from tools.search_samples_tool_service import SearchSamplesToolService
 from tools.server_info_tool_service import ServerInfoToolService
 from tools.submit_sample_tool_service import SubmitSampleToolService
 
-
 def test_tool_metadata_names_are_registered():
     assert GetSampleToolService.__is_tool__ is True
     assert GetSampleToolService.__tool_name__ == "biosamples_getsample"

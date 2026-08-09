@@ -1,9 +1,9 @@
 import sys
 import types
+import pytest
+
 from pathlib import Path
 from unittest.mock import AsyncMock
-
-import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -30,7 +30,6 @@ class _FakeRedis:
         self.storage[key] = value
         return True
 
-
 class _SingletonProvider:
     def __init__(self, cls, **dependencies):
         self.cls = cls
@@ -46,10 +45,8 @@ class _SingletonProvider:
             self._instance = self.cls(**resolved)
         return self._instance
 
-
 class _DynamicContainer:
     pass
-
 
 def _install_redis_shim():
     redis_module = sys.modules.get("redis") or types.ModuleType("redis")
@@ -58,7 +55,6 @@ def _install_redis_shim():
     redis_module.asyncio = redis_asyncio_module
     sys.modules.setdefault("redis", redis_module)
     sys.modules.setdefault("redis.asyncio", redis_asyncio_module)
-
 
 def _install_dependency_injector_shim():
     dependency_injector_module = sys.modules.get("dependency_injector") or types.ModuleType("dependency_injector")
@@ -86,7 +82,6 @@ def request_context():
         tool_name="test_tool",
         payload={"hello": "world"},
     )
-
 
 @pytest.fixture
 def async_next_handler():

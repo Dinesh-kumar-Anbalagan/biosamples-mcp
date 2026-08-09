@@ -1,11 +1,9 @@
-from unittest.mock import AsyncMock, Mock, patch
-
 import httpx
 import pytest
 
+from unittest.mock import AsyncMock, Mock, patch
 from adapter.bio_samples_adapter import BioSamplesAdapter
 from domain.bio_samples_api_error import BioSamplesAPIError
-
 
 class AsyncClientMock:
     def __init__(self, response):
@@ -28,10 +26,8 @@ def response(status_code=200, json_body=None, text="body", url="https://example.
     mock.json.return_value = json_body or {"ok": True}
     return mock
 
-
 def test_headers_without_auth_token():
     assert BioSamplesAdapter()._headers() == {"Accept": "application/hal+json"}
-
 
 def test_headers_with_auth_token():
     assert BioSamplesAdapter()._headers("token") == {
@@ -39,10 +35,8 @@ def test_headers_with_auth_token():
         "Authorization": "Bearer token",
     }
 
-
 def test_raise_for_error_does_nothing_for_success_response():
     BioSamplesAdapter()._raise_for_error(response(200), "failed")
-
 
 def test_raise_for_error_raises_api_error_for_failure_response():
     adapter = BioSamplesAdapter()
@@ -78,7 +72,6 @@ async def test_get_calls_httpx_and_returns_json():
         headers={"Accept": "application/hal+json"},
     )
 
-
 @pytest.mark.asyncio
 async def test_post_calls_httpx_and_returns_json():
     adapter = BioSamplesAdapter()
@@ -98,7 +91,6 @@ async def test_post_calls_httpx_and_returns_json():
             "Content-Type": "application/json",
         },
     )
-
 
 @pytest.mark.asyncio
 async def test_search_samples_builds_params_with_filters_and_date_range():
@@ -126,7 +118,6 @@ async def test_search_samples_builds_params_with_filters_and_date_range():
         ],
     )
 
-
 @pytest.mark.asyncio
 async def test_search_samples_date_range_requires_field():
     adapter = BioSamplesAdapter()
@@ -140,7 +131,6 @@ async def test_search_samples_date_range_requires_field():
     assert "Date range requires field" in str(exc.value)
     assert exc.value.retryable is False
 
-
 @pytest.mark.asyncio
 async def test_get_sample_calls_get_with_accession_path():
     adapter = BioSamplesAdapter()
@@ -152,7 +142,6 @@ async def test_get_sample_calls_get_with_accession_path():
     assert result == {"accession": "SAMN1"}
     get.assert_awaited_once_with("/samples/SAMN1")
 
-
 @pytest.mark.asyncio
 async def test_submit_sample_requires_auth_token():
     adapter = BioSamplesAdapter()
@@ -162,7 +151,6 @@ async def test_submit_sample_requires_auth_token():
 
     assert "Authentication token is required" in str(exc.value)
     assert exc.value.retryable is False
-
 
 @pytest.mark.asyncio
 async def test_submit_sample_posts_submission_with_token():

@@ -33,7 +33,7 @@ async def test_server_info_tool_service_returns_static_info(context):
 
     assert result["serverName"] == "BioSamples MCP Server"
     assert result["version"] == "0.1.0"
-    assert "biosamples.search_samples" in result["supportedTools"]
+    assert "biosamples_searchsamples" in result["supportedTools"]
 
 
 @pytest.mark.asyncio

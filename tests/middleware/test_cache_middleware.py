@@ -1,16 +1,14 @@
 import json
-from unittest.mock import AsyncMock
-
 import pytest
 
+from unittest.mock import AsyncMock
 from middleware.cache_middleware import CacheMiddleware
 from orchestrator.request_context import RequestContext
-
 
 @pytest.mark.asyncio
 async def test_cache_middleware_skips_non_cacheable_tool(async_next_handler):
     redis = AsyncMock()
-    context = RequestContext("rid", "biosamples.submit_sample", {"x": 1})
+    context = RequestContext("rid", "biosamples_submitsample", {"x": 1})
     middleware = CacheMiddleware(redis)
 
     result = await middleware.process(context, async_next_handler)
@@ -18,7 +16,6 @@ async def test_cache_middleware_skips_non_cacheable_tool(async_next_handler):
     assert result == {"ok": True}
     redis.get.assert_not_called()
     redis.setex.assert_not_called()
-
 
 @pytest.mark.asyncio
 async def test_cache_middleware_skips_when_redis_is_none(async_next_handler):
@@ -29,7 +26,6 @@ async def test_cache_middleware_skips_when_redis_is_none(async_next_handler):
 
     assert result == {"ok": True}
     async_next_handler.assert_awaited_once_with(context)
-
 
 @pytest.mark.asyncio
 async def test_cache_middleware_returns_cached_value(async_next_handler):
@@ -43,7 +39,6 @@ async def test_cache_middleware_returns_cached_value(async_next_handler):
     assert result == {"cached": True}
     async_next_handler.assert_not_awaited()
     redis.setex.assert_not_called()
-
 
 @pytest.mark.asyncio
 async def test_cache_middleware_writes_live_response_on_miss(async_next_handler):
@@ -60,7 +55,6 @@ async def test_cache_middleware_writes_live_response_on_miss(async_next_handler)
     assert args[1] == 123
     assert json.loads(args[2]) == {"ok": True}
 
-
 @pytest.mark.asyncio
 async def test_cache_middleware_ignores_redis_read_error(async_next_handler):
     redis = AsyncMock()
@@ -72,7 +66,6 @@ async def test_cache_middleware_ignores_redis_read_error(async_next_handler):
 
     assert result == {"ok": True}
     async_next_handler.assert_awaited_once_with(context)
-
 
 def test_cache_key_is_stable_for_same_payload_order():
     middleware = CacheMiddleware(None)

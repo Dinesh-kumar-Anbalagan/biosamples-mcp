@@ -191,7 +191,11 @@ class SubmitSampleToolService(ToolService):
                 },
             )
 
-            auth_token = json.loads(cached)
+            auth_token = (
+                cached.decode("utf-8")
+                if isinstance(cached, bytes)
+                else cached
+            )
 
         else:
             return {

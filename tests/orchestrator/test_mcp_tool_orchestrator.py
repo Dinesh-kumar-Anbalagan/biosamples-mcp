@@ -1,9 +1,7 @@
-from unittest.mock import AsyncMock, patch
-
 import pytest
 
+from unittest.mock import AsyncMock, patch
 from orchestrator.mcp_tool_orchestrator import MCPToolOrchestrator
-
 
 @pytest.mark.asyncio
 async def test_mcp_tool_orchestrator_creates_context_and_calls_pipeline():

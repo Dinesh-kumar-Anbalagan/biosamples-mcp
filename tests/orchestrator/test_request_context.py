@@ -1,7 +1,5 @@
 from datetime import timezone
-
 from orchestrator.request_context import RequestContext
-
 
 def test_request_context_defaults():
     context = RequestContext("rid", "tool", {"x": 1})

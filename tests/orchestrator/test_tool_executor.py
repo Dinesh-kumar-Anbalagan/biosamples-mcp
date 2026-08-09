@@ -1,10 +1,8 @@
-from unittest.mock import AsyncMock
-
 import pytest
 
+from unittest.mock import AsyncMock
 from orchestrator.request_context import RequestContext
 from orchestrator.tool_executor import ToolExecutor
-
 
 class Provider:
     def __init__(self, tool):
@@ -13,11 +11,9 @@ class Provider:
     def __call__(self):
         return self.tool
 
-
 class Container:
     def __init__(self, providers):
         self.providers = providers
-
 
 @pytest.mark.asyncio
 async def test_tool_executor_executes_registered_tool():
@@ -30,7 +26,6 @@ async def test_tool_executor_executes_registered_tool():
 
     assert result == {"ok": True}
     tool.execute.assert_awaited_once_with(context, {"x": 1})
-
 
 @pytest.mark.asyncio
 async def test_tool_executor_raises_for_missing_tool():

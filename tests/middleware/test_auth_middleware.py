@@ -3,7 +3,6 @@ import pytest
 from middleware.auth_middleware import AuthError, AuthMiddleware
 from orchestrator.request_context import RequestContext
 
-
 @pytest.mark.asyncio
 async def test_auth_middleware_allows_unprotected_tool(async_next_handler):
     context = RequestContext("rid", "biosamples.search_samples", {})
@@ -16,7 +15,6 @@ async def test_auth_middleware_allows_unprotected_tool(async_next_handler):
     assert context.user_id == "anonymous-user"
     async_next_handler.assert_awaited_once_with(context)
 
-
 @pytest.mark.asyncio
 async def test_auth_middleware_rejects_submit_without_webin_id(async_next_handler):
     context = RequestContext("rid", "biosamples_submitsample", {})
@@ -28,7 +26,6 @@ async def test_auth_middleware_rejects_submit_without_webin_id(async_next_handle
     assert "Webin ID is required" in str(exc.value)
     assert exc.value.retryable is False
     async_next_handler.assert_not_awaited()
-
 
 @pytest.mark.asyncio
 async def test_auth_middleware_rejects_submit_with_webin_id(async_next_handler):

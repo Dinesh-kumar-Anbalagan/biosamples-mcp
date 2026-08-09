@@ -4,7 +4,6 @@ import logging
 from core.decorators import Component, Tool, component_registry, tool_registry
 from core.logger import JsonFormatter, configure_logging, get_logger
 
-
 def test_tool_decorator_adds_metadata_and_registers_class():
     start_len = len(tool_registry)
 
@@ -19,7 +18,6 @@ def test_tool_decorator_adds_metadata_and_registers_class():
     assert tool_registry[-1] is ExampleTool
     assert len(tool_registry) == start_len + 1
 
-
 def test_component_decorator_adds_metadata_and_registers_class():
     start_len = len(component_registry)
 
@@ -30,7 +28,6 @@ def test_component_decorator_adds_metadata_and_registers_class():
     assert ExampleComponent.__component_name__ == "example_component"
     assert component_registry[-1] is ExampleComponent
     assert len(component_registry) == start_len + 1
-
 
 def test_json_formatter_outputs_json_with_extra_fields():
     record = logging.LogRecord(
@@ -51,7 +48,6 @@ def test_json_formatter_outputs_json_with_extra_fields():
     assert data["message"] == "hello"
     assert data["requestId"] == "rid"
 
-
 def test_configure_logging_sets_root_handler():
     configure_logging("DEBUG")
 
@@ -59,7 +55,6 @@ def test_configure_logging_sets_root_handler():
     assert root.level == logging.DEBUG
     assert len(root.handlers) == 1
     assert isinstance(root.handlers[0].formatter, JsonFormatter)
-
 
 def test_get_logger_returns_named_logger():
     assert get_logger("abc").name == "abc"
