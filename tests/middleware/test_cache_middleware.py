@@ -15,7 +15,7 @@ async def test_cache_middleware_skips_non_cacheable_tool(async_next_handler):
 
     assert result == {"ok": True}
     redis.get.assert_not_called()
-    redis.setex.assert_not_called()
+    redis.set.assert_not_called()
 
 @pytest.mark.asyncio
 async def test_cache_middleware_skips_when_redis_is_none(async_next_handler):
@@ -38,7 +38,7 @@ async def test_cache_middleware_returns_cached_value(async_next_handler):
 
     assert result == {"cached": True}
     async_next_handler.assert_not_awaited()
-    redis.setex.assert_not_called()
+    redis.set.assert_not_called()
 
 @pytest.mark.asyncio
 async def test_cache_middleware_writes_live_response_on_miss(async_next_handler):
@@ -49,11 +49,11 @@ async def test_cache_middleware_writes_live_response_on_miss(async_next_handler)
 
     result = await middleware.process(context, async_next_handler)
 
-    assert result == {"ok": True}
-    redis.setex.assert_awaited_once()
-    args = redis.setex.await_args.args
-    assert args[1] == 123
-    assert json.loads(args[2]) == {"ok": True}
+    assert result == {'ok': True}
+    redis.set.assert_awaited_once()
+    args = redis.set.await_args.args
+    assert json.loads(args[1]) == {'ok': True}
+    assert args[2] == 123
 
 @pytest.mark.asyncio
 async def test_cache_middleware_ignores_redis_read_error(async_next_handler):

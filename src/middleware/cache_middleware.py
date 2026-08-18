@@ -98,10 +98,10 @@ class CacheMiddleware(ToolMiddleware):
         response = await next_handler(context)
 
         try:
-            await self.redis.setex(
+            await self.redis.set(
                 cache_key,
-                self.ttl_seconds,
                 json.dumps(response, default=str),
+                self.ttl_seconds,
             )
         except Exception as error:
             logger.warning(
